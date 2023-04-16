@@ -11,11 +11,8 @@ export default function main() {
         boards.push(gameboard());
         players.push(player("AI"));
         boards.push(gameboard());
+        boards[1].autoPlaceShips();   
     }
-
-    
-
-
 
     return {players, boards, initialize};
 }

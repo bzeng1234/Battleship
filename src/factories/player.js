@@ -3,22 +3,23 @@ let gameboard = require('./gameboard');
 function player(name) {
     let pastMoves = [];
 
-    let makeRandomMove = (gameboard) => {
-        let row = Math.floor(Math.random() * gameboard.board.length);
-        let column = Math.floor(Math.random() * gameboard.board.length);
+    let makeRandomMove = () => {
+        let row = Math.floor(Math.random() * 10);
+        let column = Math.floor(Math.random() * 10);
 
-        while(noRepeat(row, column) !== true) {
-            makeRandomMove(gameboard);
-        }
-        pastMoves.push([row,column]);
+        //while(noRepeat(row, column) !== true) {
+        //    makeRandomMove();
+        //}
+        //pastMoves.push([row,column]);
         return [row,column];
     }
 
-    let makeMove = (row, column, gameboard) => {
+    let makeMove = (row, column) => {
         if(noRepeat(row, column) === true) {
             pastMoves.push([row,column]);
-            return [row,column];
-        }
+            return true;
+        } else
+        return false;
     }
 
     let noRepeat = (row, column) => {

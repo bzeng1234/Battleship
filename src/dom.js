@@ -21,26 +21,22 @@ directionBtn.addEventListener('click', () => {
     }
 });
 
-let addBtn = document.querySelector('.add');
-addBtn.addEventListener('click', () => {
-    let ship1 = ship(1,2);
-    game.boards[0].addShip(ship1,[2,2], "vertical");
-    console.log(game.boards)
-});
+let gameStatusElem = document.querySelector('.game-status');
 
-let cellBtnList = document.querySelectorAll('.cell');
+let cellBtnList = document.querySelectorAll('.player-gameboard > .cell');
     cellBtnList.forEach(cell => {
         cell.addEventListener('mouseover', cover);
         cell.addEventListener('mouseout', uncover);
         cell.addEventListener('click', addship);
     });
+let oppCellBtnList = document.querySelectorAll('.ai-gameboard > .cell');
 
 function cover(e) {
     let column = Number(e.target.attributes[1].value);
     let row = Number(e.target.attributes[2].value);
 
-    let colList = document.querySelectorAll(`[data-x=\"${column}\"]`);
-    let rowList = document.querySelectorAll(`[data-y=\"${row}\"]`);
+    let colList = document.querySelectorAll(`.player-gameboard > .cell[data-x=\"${column}\"]`);
+    let rowList = document.querySelectorAll(`.player-gameboard > .cell[data-y=\"${row}\"]`);
 
     if(directionValue === "vertical") {
         if(rowList.length - row >= shipSize[0]) {
@@ -83,8 +79,8 @@ function uncover(e) {
     let column = Number(e.target.attributes[1].value);
     let row = Number(e.target.attributes[2].value);
 
-    let colList = document.querySelectorAll(`[data-x=\"${column}\"]`);
-    let rowList = document.querySelectorAll(`[data-y=\"${row}\"]`);
+    let colList = document.querySelectorAll(`.player-gameboard > .cell[data-x=\"${column}\"]`);
+    let rowList = document.querySelectorAll(`.player-gameboard > .cell[data-y=\"${row}\"]`);
 
     if(directionValue === "vertical") {
         for(let i = row;i < colList.length;i++) {
@@ -103,8 +99,8 @@ function addship(e) {
     let column = Number(e.target.attributes[1].value);
     let row = Number(e.target.attributes[2].value);
 
-    let colList = document.querySelectorAll(`[data-x=\"${column}\"]`);
-    let rowList = document.querySelectorAll(`[data-y=\"${row}\"]`);
+    let colList = document.querySelectorAll(`.player-gameboard > .cell[data-x=\"${column}\"]`);
+    let rowList = document.querySelectorAll(`.player-gameboard > .cell[data-y=\"${row}\"]`);
 
     if(directionValue === "vertical") {
         if(rowList.length - row >= shipSize[0]) {
@@ -137,17 +133,47 @@ function addship(e) {
     }
 
     if(shipSize.length === 0) {
+        console.log(game.boards[0].board);
+        console.log(game.boards[1].board);
         cellBtnList.forEach(cell => {
             cell.removeEventListener('mouseover', cover);
             cell.removeEventListener('mouseout', uncover);
             cell.removeEventListener('click', addship);
-
-            cell.addEventListener('click', makeMove);
         });
+        gameStatusElem.textContent = "Play Game!";
+        oppCellBtnList.forEach(cell => {
+            cell.addEventListener('click', makeMove);
+        })
     }
 }
 
 function makeMove(e) {
     let column = Number(e.target.attributes[1].value);
     let row = Number(e.target.attributes[2].value);
+
+    if(game.players[0].makeMove(row, column)) {
+        //we hit
+        if(game.boards[1].receiveAttack(row, column) === false) {
+            e.target.style.background = "red";
+            gameStatusElem.textContent = "Hit!"
+        } else {
+            e.target.style.background  = "#71717a";
+            gameStatusElem.textContent = "Missed!"
+        }
+        
+        if(game.boards[1].areAllShipsSunk() === true) {
+            gameStatusElem.textContent = "You Won!";
+        }
+
+        let aiMove = game.players[1].makeRandomMove();
+        let cellElem = document.querySelector(`.player-gameboard > .cell[data-x=\"${aiMove[1]}\"][data-y=\"${aiMove[0]}\"`)
+        if(game.boards[0].receiveAttack(aiMove[0],aiMove[1]) === false) {
+            cellElem.style.background = "red";
+        } else {
+            cellElem.style.background = "#71717a";
+        }
+        if(game.boards[0].areAllShipsSunk() === true) {
+            gameStatusElem.textContent = "AI Won!";
+        }
+    }
 }
