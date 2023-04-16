@@ -11,12 +11,12 @@ test('add ship', () => {
 });
 
 test('receive attack', () => {
-    expect(board.receiveAttack([0,0])).toBeFalsy();
+    expect(board.receiveAttack(0,0)).toBeFalsy();
 });
 
 test('missed shots', () => {
     
-    expect(board.receiveAttack([7,7])).toBeTruthy();
+    expect(board.receiveAttack(7,7)).toBeTruthy();
 });
 
 test('all ships have been sunk', () => {
