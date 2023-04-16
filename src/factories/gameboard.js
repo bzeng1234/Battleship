@@ -1,6 +1,6 @@
 let ship = require('./ship');
 
-function gameBoard() {
+function gameboard() {
     let board = Array(10).fill().map(() => Array(10).fill(0));
     let ships = [];
     let missedShot = true;
@@ -41,4 +41,4 @@ function gameBoard() {
     return {board,addShip,receiveAttack,areAllShipsSunk}
 }
 
-module.exports = gameBoard;
+module.exports = gameboard;
